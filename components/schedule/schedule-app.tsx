@@ -3,9 +3,9 @@
 import * as React from "react"
 import { StickyNoteIcon } from "lucide-react"
 
-import { ImportScheduleButton } from "@/components/schedule/import-schedule-button"
 import { LanguageToggle } from "@/components/schedule/language-toggle"
 import { ScheduleEmpty } from "@/components/schedule/schedule-empty"
+import { SubscribeFeedButton } from "@/components/schedule/subscribe-feed-button"
 import { WeekCalendar } from "@/components/schedule/week-calendar"
 import { WeekToolbar } from "@/components/schedule/week-toolbar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -15,12 +15,7 @@ import {
   firstWeekWithMeetings,
   getWeekRange,
 } from "@/lib/schedule/parse-workbook"
-import {
-  loadSchedule,
-  loadSelectedWeek,
-  saveSchedule,
-  saveSelectedWeek,
-} from "@/lib/schedule/storage"
+import { loadSelectedWeek, saveSelectedWeek } from "@/lib/schedule/storage"
 import type { Schedule } from "@/lib/schedule/types"
 
 function MetadataFields({
@@ -48,34 +43,23 @@ function MetadataFields({
   )
 }
 
-export function ScheduleApp() {
+export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
   const { t, ready: localeReady } = useLocale()
-  const [schedule, setSchedule] = React.useState<Schedule | null>(null)
   const [week, setWeek] = React.useState(1)
   const [storageReady, setStorageReady] = React.useState(false)
 
   React.useEffect(() => {
-    const stored = loadSchedule()
-    setSchedule(stored)
-    if (stored) {
-      const { minWeek, maxWeek } = getWeekRange(stored)
+    if (schedule) {
+      const { minWeek, maxWeek } = getWeekRange(schedule)
       const savedWeek = loadSelectedWeek()
       if (savedWeek != null && savedWeek >= minWeek && savedWeek <= maxWeek) {
         setWeek(savedWeek)
       } else {
-        setWeek(firstWeekWithMeetings(stored))
+        setWeek(firstWeekWithMeetings(schedule))
       }
     }
     setStorageReady(true)
-  }, [])
-
-  function onImported(next: Schedule) {
-    saveSchedule(next)
-    setSchedule(next)
-    const nextWeek = firstWeekWithMeetings(next)
-    setWeek(nextWeek)
-    saveSelectedWeek(nextWeek)
-  }
+  }, [schedule])
 
   function onWeekChange(nextWeek: number) {
     setWeek(nextWeek)
@@ -142,7 +126,7 @@ export function ScheduleApp() {
                 onWeekChange={onWeekChange}
               />
             ) : null}
-            <ImportScheduleButton onImported={onImported} />
+            {schedule ? <SubscribeFeedButton /> : null}
             <LanguageToggle />
           </div>
         </div>
@@ -168,7 +152,7 @@ export function ScheduleApp() {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 items-center justify-center p-6">
-          <ScheduleEmpty onImported={onImported} />
+          <ScheduleEmpty />
         </div>
       )}
     </div>

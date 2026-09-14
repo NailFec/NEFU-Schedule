@@ -2,8 +2,6 @@ export type Locale = "zh" | "en"
 
 export type Messages = {
   appTitle: string
-  importSchedule: string
-  importing: string
   emptyTitle: string
   emptyDescription: string
   weekLabel: (week: number) => string
@@ -22,11 +20,12 @@ export type Messages = {
   studentName: string
   university: string
   notesTitle: string
-  importSuccess: string
-  importError: string
   language: string
   chinese: string
   english: string
+  subscribeFeed: string
+  subscribeCopied: string
+  subscribeCopyError: string
 }
 
 function formatPeriodTime(startTime: string, endTime: string): string {
@@ -36,11 +35,9 @@ function formatPeriodTime(startTime: string, endTime: string): string {
 export const messages: Record<Locale, Messages> = {
   zh: {
     appTitle: "课程表",
-    importSchedule: "导入课表",
-    importing: "正在导入…",
-    emptyTitle: "还没有课表",
+    emptyTitle: "无法读取课表",
     emptyDescription:
-      "导入学校导出的 Excel 课表（.xls 或 .xlsx）。新导入会覆盖当前数据。",
+      "把学校导出的 Excel 放到服务器的 data/schedule.xls 或 data/schedule.xlsx，然后刷新页面。",
     weekLabel: (week) => `第 ${week} 周`,
     previousWeek: "上一周",
     nextWeek: "下一周",
@@ -65,19 +62,18 @@ export const messages: Record<Locale, Messages> = {
     studentName: "学生",
     university: "学校",
     notesTitle: "备注",
-    importSuccess: "课表已导入。",
-    importError: "无法读取该课表文件。请使用学校导出的 .xls 或 .xlsx 文件。",
     language: "语言",
     chinese: "中文",
     english: "English",
+    subscribeFeed: "复制订阅链接",
+    subscribeCopied: "订阅链接已复制。",
+    subscribeCopyError: "无法复制订阅链接。",
   },
   en: {
     appTitle: "Schedule",
-    importSchedule: "Import schedule",
-    importing: "Importing…",
-    emptyTitle: "No schedule yet",
+    emptyTitle: "Schedule unavailable",
     emptyDescription:
-      "Import the Excel timetable exported by the school (.xls or .xlsx). A new import replaces the current data.",
+      "Place the school Excel export at data/schedule.xls or data/schedule.xlsx on the server, then refresh.",
     weekLabel: (week) => `Week ${week}`,
     previousWeek: "Previous week",
     nextWeek: "Next week",
@@ -102,11 +98,11 @@ export const messages: Record<Locale, Messages> = {
     studentName: "Student",
     university: "University",
     notesTitle: "Notes",
-    importSuccess: "Schedule imported.",
-    importError:
-      "Could not read that timetable. Use the .xls or .xlsx file exported by the school.",
     language: "Language",
     chinese: "中文",
     english: "English",
+    subscribeFeed: "Copy subscribe link",
+    subscribeCopied: "Subscribe link copied.",
+    subscribeCopyError: "Could not copy the subscribe link.",
   },
 }

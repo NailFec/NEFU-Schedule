@@ -244,10 +244,13 @@ export function parseWorkbookSheet(
   }
 }
 
-export async function parseScheduleFile(file: File): Promise<Schedule> {
+export async function parseWorkbookBuffer(
+  data: ArrayBuffer | Uint8Array,
+  importedAt = new Date().toISOString()
+): Promise<Schedule> {
   const XLSX = await import("xlsx")
-  const buffer = await file.arrayBuffer()
-  const workbook = XLSX.read(buffer, { type: "array" })
+  const bytes = data instanceof Uint8Array ? data : new Uint8Array(data)
+  const workbook = XLSX.read(bytes, { type: "array" })
   const firstSheetName = workbook.SheetNames[0]
   if (!firstSheetName) {
     throw new Error("The workbook is empty.")
@@ -257,10 +260,15 @@ export async function parseScheduleFile(file: File): Promise<Schedule> {
     throw new Error("The workbook is empty.")
   }
 
-  return parseWorkbookSheet(sheet, {
+  const schedule = parseWorkbookSheet(sheet, {
     encodeCell: XLSX.utils.encode_cell,
     decodeRange: XLSX.utils.decode_range,
   })
+
+  return {
+    ...schedule,
+    importedAt,
+  }
 }
 
 export function getWeekRange(schedule: Schedule): {
