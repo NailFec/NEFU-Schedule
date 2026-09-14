@@ -1,0 +1,118 @@
+import type { PeriodSlot } from "@/lib/schedule/types"
+
+export const PERIOD_COUNT = 16
+
+export const CANONICAL_PERIODS: PeriodSlot[] = [
+  {
+    id: "1",
+    sectionNumber: 1,
+    startTime: "08:00",
+    endTime: "08:45",
+    dayPart: "morning",
+  },
+  {
+    id: "2",
+    sectionNumber: 2,
+    startTime: "08:50",
+    endTime: "09:35",
+    dayPart: "morning",
+  },
+  {
+    id: "3",
+    sectionNumber: 3,
+    startTime: "09:50",
+    endTime: "10:35",
+    dayPart: "morning",
+  },
+  {
+    id: "4",
+    sectionNumber: 4,
+    startTime: "10:40",
+    endTime: "11:25",
+    dayPart: "morning",
+  },
+  {
+    id: "5",
+    sectionNumber: 5,
+    startTime: "11:30",
+    endTime: "12:15",
+    dayPart: "morning",
+  },
+  {
+    id: "6",
+    sectionNumber: 6,
+    startTime: "12:20",
+    endTime: "13:05",
+    dayPart: "morning",
+  },
+  {
+    id: "7",
+    sectionNumber: 7,
+    startTime: "13:10",
+    endTime: "13:55",
+    dayPart: "morning",
+  },
+  {
+    id: "8",
+    sectionNumber: 8,
+    startTime: "14:00",
+    endTime: "14:45",
+    dayPart: "afternoon",
+  },
+  {
+    id: "9",
+    sectionNumber: 9,
+    startTime: "14:50",
+    endTime: "15:35",
+    dayPart: "afternoon",
+  },
+  {
+    id: "10",
+    sectionNumber: 10,
+    startTime: "15:50",
+    endTime: "16:35",
+    dayPart: "afternoon",
+  },
+  {
+    id: "11",
+    sectionNumber: 11,
+    startTime: "16:40",
+    endTime: "17:25",
+    dayPart: "afternoon",
+  },
+  {
+    id: "12",
+    sectionNumber: 12,
+    startTime: "17:30",
+    endTime: "18:15",
+    dayPart: "afternoon",
+  },
+  {
+    id: "13",
+    sectionNumber: 13,
+    startTime: "18:20",
+    endTime: "19:05",
+    dayPart: "afternoon",
+  },
+  {
+    id: "14",
+    sectionNumber: 14,
+    startTime: "19:30",
+    endTime: "20:15",
+    dayPart: "evening",
+  },
+  {
+    id: "15",
+    sectionNumber: 15,
+    startTime: "20:20",
+    endTime: "21:05",
+    dayPart: "evening",
+  },
+  {
+    id: "16",
+    sectionNumber: 16,
+    startTime: "21:10",
+    endTime: "21:55",
+    dayPart: "evening",
+  },
+]
