@@ -38,7 +38,7 @@ export function WeekToolbar({
   }))
 
   return (
-    <ButtonGroup>
+    <ButtonGroup className="w-full sm:w-fit">
       <Button
         variant="outline"
         size="icon"
@@ -61,7 +61,10 @@ export function WeekToolbar({
           }
         }}
       >
-        <SelectTrigger aria-label={t.selectWeek} className="min-w-28">
+        <SelectTrigger
+          aria-label={t.selectWeek}
+          className="min-w-0 flex-1 sm:min-w-28 sm:flex-none"
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent alignItemWithTrigger={false} side="bottom">

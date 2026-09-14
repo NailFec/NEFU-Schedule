@@ -52,9 +52,9 @@ export function SubscribeFeedButton() {
   }
 
   return (
-    <Button variant="outline" onClick={onCopy}>
+    <Button variant="outline" onClick={onCopy} aria-label={t.subscribeFeed}>
       <LinkIcon data-icon="inline-start" />
-      {t.subscribeFeed}
+      <span className="max-sm:sr-only">{t.subscribeFeed}</span>
     </Button>
   )
 }

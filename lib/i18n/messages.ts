@@ -12,6 +12,7 @@ export type Messages = {
   periodLabel: (sectionNumber: number) => string
   periodTime: (startTime: string, endTime: string) => string
   days: [string, string, string, string, string, string, string]
+  daysShort: [string, string, string, string, string, string, string]
   academicTerm: string
   className: string
   major: string
@@ -54,6 +55,7 @@ export const messages: Record<Locale, Messages> = {
       "星期六",
       "星期日",
     ],
+    daysShort: ["一", "二", "三", "四", "五", "六", "日"],
     academicTerm: "学年学期",
     className: "班级",
     major: "专业",
@@ -90,6 +92,7 @@ export const messages: Record<Locale, Messages> = {
       "Saturday",
       "Sunday",
     ],
+    daysShort: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
     academicTerm: "Academic term",
     className: "Class",
     major: "Major",

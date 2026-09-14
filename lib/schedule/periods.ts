@@ -116,3 +116,33 @@ export const CANONICAL_PERIODS: PeriodSlot[] = [
     dayPart: "evening",
   },
 ]
+
+export function periodBySection(sectionNumber: number) {
+  return CANONICAL_PERIODS.find(
+    (period) => period.sectionNumber === sectionNumber
+  )
+}
+
+export function meetingTimeRange(sectionNumbers: number[]): {
+  startTime: string
+  endTime: string
+} | null {
+  const sections = sectionNumbers.filter(
+    (section) =>
+      Number.isInteger(section) && section >= 1 && section <= PERIOD_COUNT
+  )
+  if (sections.length === 0) {
+    return null
+  }
+
+  const startPeriod = periodBySection(Math.min(...sections))
+  const endPeriod = periodBySection(Math.max(...sections))
+  if (!startPeriod || !endPeriod) {
+    return null
+  }
+
+  return {
+    startTime: startPeriod.startTime,
+    endTime: endPeriod.endTime,
+  }
+}

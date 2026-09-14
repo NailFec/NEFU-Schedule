@@ -77,12 +77,12 @@ export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
 
   if (!ready) {
     return (
-      <div className="flex h-dvh flex-col overflow-hidden">
-        <div className="flex shrink-0 items-center justify-between gap-3 border-b px-4 py-3">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-8 w-40" />
+      <div className="flex h-dvh flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+        <div className="flex shrink-0 items-center justify-between gap-3 border-b px-3 py-2 sm:px-4 sm:py-3">
+          <Skeleton className="h-8 w-24 sm:w-48" />
+          <Skeleton className="h-8 w-28 sm:w-40" />
         </div>
-        <div className="min-h-0 flex-1 p-3">
+        <div className="min-h-0 flex-1 p-2 sm:p-3">
           <Skeleton className="h-full w-full" />
         </div>
       </div>
@@ -92,50 +92,75 @@ export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
   const range = schedule ? getWeekRange(schedule) : null
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden">
-      <header className="flex shrink-0 flex-col gap-2 border-b px-4 py-3">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex h-dvh flex-col overflow-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+      <header className="flex shrink-0 flex-col gap-2 border-b px-3 py-2 sm:px-4 sm:py-3">
+        <div className="flex items-center justify-between gap-2">
           <div className="min-w-0">
             <h1 className="font-heading text-base font-medium">{t.appTitle}</h1>
+            {schedule?.metadata.studentName ? (
+              <p className="truncate text-sm text-muted-foreground sm:hidden">
+                {schedule.metadata.studentName}
+              </p>
+            ) : null}
             {schedule ? (
-              <MetadataFields
-                items={[
-                  {
-                    label: t.studentName,
-                    value: schedule.metadata.studentName,
-                  },
-                  {
-                    label: t.academicTerm,
-                    value: schedule.metadata.academicTerm,
-                  },
-                  { label: t.className, value: schedule.metadata.className },
-                  { label: t.major, value: schedule.metadata.major },
-                  { label: t.department, value: schedule.metadata.department },
-                  { label: t.university, value: schedule.metadata.university },
-                  { label: t.printedAt, value: schedule.metadata.printedAt },
-                ]}
-              />
+              <div className="hidden sm:block">
+                <MetadataFields
+                  items={[
+                    {
+                      label: t.studentName,
+                      value: schedule.metadata.studentName,
+                    },
+                    {
+                      label: t.academicTerm,
+                      value: schedule.metadata.academicTerm,
+                    },
+                    { label: t.className, value: schedule.metadata.className },
+                    { label: t.major, value: schedule.metadata.major },
+                    {
+                      label: t.department,
+                      value: schedule.metadata.department,
+                    },
+                    {
+                      label: t.university,
+                      value: schedule.metadata.university,
+                    },
+                    { label: t.printedAt, value: schedule.metadata.printedAt },
+                  ]}
+                />
+              </div>
             ) : null}
           </div>
-          <div className="flex flex-wrap items-center gap-2">
-            {schedule && range ? (
-              <WeekToolbar
-                week={week}
-                minWeek={range.minWeek}
-                maxWeek={range.maxWeek}
-                onWeekChange={onWeekChange}
-              />
-            ) : null}
+          <div className="flex shrink-0 items-center gap-2">
+            <div className="hidden sm:block">
+              {schedule && range ? (
+                <WeekToolbar
+                  week={week}
+                  minWeek={range.minWeek}
+                  maxWeek={range.maxWeek}
+                  onWeekChange={onWeekChange}
+                />
+              ) : null}
+            </div>
             {schedule ? <SubscribeFeedButton /> : null}
             <LanguageToggle />
           </div>
         </div>
+        {schedule && range ? (
+          <div className="sm:hidden">
+            <WeekToolbar
+              week={week}
+              minWeek={range.minWeek}
+              maxWeek={range.maxWeek}
+              onWeekChange={onWeekChange}
+            />
+          </div>
+        ) : null}
         {schedule && schedule.notes.length > 0 ? (
-          <Alert>
+          <Alert className="py-1.5 sm:py-2">
             <StickyNoteIcon />
-            <AlertTitle>{t.notesTitle}</AlertTitle>
+            <AlertTitle className="sr-only sm:not-sr-only">{t.notesTitle}</AlertTitle>
             <AlertDescription>
-              <div className="flex max-h-16 flex-col gap-1 overflow-hidden">
+              <div className="flex max-h-10 flex-col gap-1 overflow-hidden sm:max-h-16">
                 {schedule.notes.map((note) => (
                   <p key={note} className="truncate">
                     {note}
@@ -147,11 +172,11 @@ export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
         ) : null}
       </header>
       {schedule && range ? (
-        <div className="min-h-0 flex-1 p-3">
+        <div className="min-h-0 flex-1 p-2 sm:p-3">
           <WeekCalendar schedule={schedule} week={week} />
         </div>
       ) : (
-        <div className="flex min-h-0 flex-1 items-center justify-center p-6">
+        <div className="flex min-h-0 flex-1 items-center justify-center p-4 sm:p-6">
           <ScheduleEmpty />
         </div>
       )}

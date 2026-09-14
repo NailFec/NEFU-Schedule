@@ -15,9 +15,20 @@ type WeekCalendarProps = {
 
 const DAY_INDEXES: DayIndex[] = [0, 1, 2, 3, 4, 5, 6]
 
+function visibleDayIndexes(
+  weeklyMeetings: ReturnType<typeof meetingsForWeek>
+): DayIndex[] {
+  return DAY_INDEXES.filter(
+    (dayIndex) =>
+      dayIndex <= 4 ||
+      weeklyMeetings.some((meeting) => meeting.dayIndex === dayIndex)
+  )
+}
+
 export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
   const { t } = useLocale()
   const weeklyMeetings = meetingsForWeek(schedule, week)
+  const days = visibleDayIndexes(weeklyMeetings)
   const lastPeriodIndex = CANONICAL_PERIODS.length - 1
 
   return (
@@ -26,25 +37,28 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
       aria-label={t.appTitle}
       className="grid h-full min-h-0 w-full overflow-hidden rounded-lg ring-1 ring-foreground/10"
       style={{
-        gridTemplateColumns: "auto repeat(7, minmax(0, 1fr))",
+        gridTemplateColumns: `auto repeat(${days.length}, minmax(0, 1fr))`,
         gridTemplateRows: `auto repeat(${PERIOD_COUNT}, minmax(0, 1fr))`,
       }}
     >
       <div
         role="columnheader"
-        className="bg-muted/40 px-2 py-2 text-xs font-medium text-muted-foreground"
+        className="bg-muted/40 px-1 py-2 text-xs font-medium text-muted-foreground sm:px-2"
         style={{ gridColumn: 1, gridRow: 1 }}
       >
         {t.period}
       </div>
-      {DAY_INDEXES.map((dayIndex) => (
+      {days.map((dayIndex, columnIndex) => (
         <div
           key={dayIndex}
           role="columnheader"
-          className="min-w-0 border-l border-solid bg-muted/40 px-1 py-2 text-center text-sm font-medium"
-          style={{ gridColumn: dayIndex + 2, gridRow: 1 }}
+          className="min-w-0 border-l border-solid bg-muted/40 px-0.5 py-2 text-center text-sm font-medium sm:px-1"
+          style={{ gridColumn: columnIndex + 2, gridRow: 1 }}
         >
-          <span className="block truncate">{t.days[dayIndex]}</span>
+          <span className="block truncate sm:hidden">
+            {t.daysShort[dayIndex]}
+          </span>
+          <span className="hidden truncate sm:block">{t.days[dayIndex]}</span>
         </div>
       ))}
       {CANONICAL_PERIODS.map((period, periodIndex) => {
@@ -54,19 +68,25 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
             <div
               role="rowheader"
               className={cn(
-                "flex min-h-0 flex-col items-end justify-center px-2 text-right",
+                "flex min-h-0 flex-col items-center justify-center px-1 text-center sm:items-end sm:px-2 sm:text-right",
                 !isLastPeriod && "border-b border-dashed"
               )}
               style={{ gridColumn: 1, gridRow: periodIndex + 2 }}
             >
-              <span className="text-xs leading-tight font-medium">
+              <span className="text-xs leading-tight font-medium sm:hidden">
+                {period.sectionNumber}
+              </span>
+              <span className="hidden text-xs leading-tight font-medium sm:block">
                 {t.periodLabel(period.sectionNumber)}
               </span>
-              <span className="text-[10px] leading-tight text-muted-foreground tabular-nums">
+              <span className="text-[10px] leading-tight text-muted-foreground tabular-nums sm:hidden">
+                {period.startTime}
+              </span>
+              <span className="hidden text-[10px] leading-tight text-muted-foreground tabular-nums sm:block">
                 {t.periodTime(period.startTime, period.endTime)}
               </span>
             </div>
-            {DAY_INDEXES.map((dayIndex) => (
+            {days.map((dayIndex, columnIndex) => (
               <div
                 key={dayIndex}
                 className={cn(
@@ -74,7 +94,7 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
                   !isLastPeriod && "border-b border-dashed"
                 )}
                 style={{
-                  gridColumn: dayIndex + 2,
+                  gridColumn: columnIndex + 2,
                   gridRow: periodIndex + 2,
                 }}
               />
@@ -82,7 +102,7 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
           </div>
         )
       })}
-      {DAY_INDEXES.map((dayIndex) => {
+      {days.map((dayIndex, columnIndex) => {
         const placed = placeMeetings(
           weeklyMeetings.filter((meeting) => meeting.dayIndex === dayIndex)
         )
@@ -92,7 +112,7 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
             role="presentation"
             className="relative min-h-0 min-w-0 border-l border-solid"
             style={{
-              gridColumn: dayIndex + 2,
+              gridColumn: columnIndex + 2,
               gridRow: `2 / span ${PERIOD_COUNT}`,
             }}
           >
