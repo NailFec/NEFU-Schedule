@@ -3,7 +3,7 @@
 import { CourseBlock } from "@/components/schedule/course-block"
 import { useLocale } from "@/hooks/use-locale"
 import { placeMeetings } from "@/lib/schedule/layout"
-import { meetingsForWeek } from "@/lib/schedule/parse-workbook"
+import { meetingsForWeek } from "@/lib/schedule/query"
 import { CANONICAL_PERIODS, PERIOD_COUNT } from "@/lib/schedule/periods"
 import type { DayIndex, Schedule } from "@/lib/schedule/types"
 import { cn } from "cn"

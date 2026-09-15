@@ -7,12 +7,12 @@ So this project allows students at NEFU to have a clearer view and more function
 - Access the schedule much faster
 - Have a cleaner and better information view
 - Subscribe in Google Calendar, Apple Calendar, or Outlook via `/feed.ics`
-- [TODO,IMPORTANT] Sync from the school's website in real time
+- [TODO] Sync from the school's website in real time (currently a saved HTML snapshot in `data/`)
 
 ## Updating the timetable
 
-1. Replace `data/schedule.xls` (or `data/schedule.xlsx`) with the Excel file exported by the school.
-2. Refresh the site. Each request reads the file from disk.
+1. Save the personal timetable page from the school site into `data/`. A file named `data/schedule.html` works; a browser “Webpage, Complete” save also works (the timetable iframe is usually under `data/*_files/xskb_list*.html`).
+2. Refresh the site. Each request reads HTML from `data/`.
 3. Calendar apps subscribed to `https://your-domain/feed.ics` pick up the new events on their next refresh (Google Calendar can take several hours).
 
 Week 1 Monday is `2026-08-31` (`Asia/Shanghai`). Change that in `lib/schedule/calendar-config.ts` when the term changes.

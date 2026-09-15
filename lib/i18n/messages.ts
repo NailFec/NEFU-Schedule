@@ -38,7 +38,7 @@ export const messages: Record<Locale, Messages> = {
     appTitle: "课程表",
     emptyTitle: "无法读取课表",
     emptyDescription:
-      "把学校导出的 Excel 放到服务器的 data/schedule.xls 或 data/schedule.xlsx，然后刷新页面。",
+      "把教务系统个人课表页保存到服务器的 data 目录（可用 schedule.html，或浏览器“网页，全部”），然后刷新页面。",
     weekLabel: (week) => `第 ${week} 周`,
     previousWeek: "上一周",
     nextWeek: "下一周",
@@ -75,7 +75,7 @@ export const messages: Record<Locale, Messages> = {
     appTitle: "Schedule",
     emptyTitle: "Schedule unavailable",
     emptyDescription:
-      "Place the school Excel export at data/schedule.xls or data/schedule.xlsx on the server, then refresh.",
+      "Save the school timetable page into the server data directory (schedule.html or a browser “Webpage, Complete” save), then refresh.",
     weekLabel: (week) => `Week ${week}`,
     previousWeek: "Previous week",
     nextWeek: "Next week",

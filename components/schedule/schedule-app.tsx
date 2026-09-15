@@ -11,10 +11,7 @@ import { WeekToolbar } from "@/components/schedule/week-toolbar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLocale } from "@/hooks/use-locale"
-import {
-  firstWeekWithMeetings,
-  getWeekRange,
-} from "@/lib/schedule/parse-workbook"
+import { firstWeekWithMeetings, getWeekRange } from "@/lib/schedule/query"
 import { loadSelectedWeek, saveSelectedWeek } from "@/lib/schedule/storage"
 import type { Schedule } from "@/lib/schedule/types"
 
@@ -158,7 +155,9 @@ export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
         {schedule && schedule.notes.length > 0 ? (
           <Alert className="py-1.5 sm:py-2">
             <StickyNoteIcon />
-            <AlertTitle className="sr-only sm:not-sr-only">{t.notesTitle}</AlertTitle>
+            <AlertTitle className="sr-only sm:not-sr-only">
+              {t.notesTitle}
+            </AlertTitle>
             <AlertDescription>
               <div className="flex max-h-10 flex-col gap-1 overflow-hidden sm:max-h-16">
                 {schedule.notes.map((note) => (

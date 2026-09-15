@@ -37,3 +37,9 @@ next-env.d.ts
 
 # NailFec
 /.nailfec
+
+# Keep the saved timetable page; ignore Excel and the rest of the browser dump.
+/data/*
+!/data/教务管理系统_files/
+/data/教务管理系统_files/*
+!/data/教务管理系统_files/xskb_list(1).html
