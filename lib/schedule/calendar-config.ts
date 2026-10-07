@@ -1,3 +1,4 @@
+/** Monday of week 1: the week that contains 2026-09-01. */
 export const WEEK1_MONDAY = "2026-08-31"
 
 export const TIME_ZONE = "Asia/Shanghai"

@@ -4,7 +4,7 @@ export type Messages = {
   appTitle: string
   emptyTitle: string
   emptyDescription: string
-  weekLabel: (week: number) => string
+  weekLabel: (week: number, range: string) => string
   previousWeek: string
   nextWeek: string
   selectWeek: string
@@ -39,7 +39,7 @@ export const messages: Record<Locale, Messages> = {
     emptyTitle: "无法读取课表",
     emptyDescription:
       "把教务系统个人课表页保存到服务器的 data 目录（可用 schedule.html，或浏览器“网页，全部”），然后刷新页面。",
-    weekLabel: (week) => `第 ${week} 周`,
+    weekLabel: (week, range) => `第 ${week} 周 ${range}`,
     previousWeek: "上一周",
     nextWeek: "下一周",
     selectWeek: "选择周次",
@@ -76,7 +76,7 @@ export const messages: Record<Locale, Messages> = {
     emptyTitle: "Schedule unavailable",
     emptyDescription:
       "Save the school timetable page into the server data directory (schedule.html or a browser “Webpage, Complete” save), then refresh.",
-    weekLabel: (week) => `Week ${week}`,
+    weekLabel: (week, range) => `Week ${week} ${range}`,
     previousWeek: "Previous week",
     nextWeek: "Next week",
     selectWeek: "Select week",

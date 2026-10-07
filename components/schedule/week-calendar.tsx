@@ -2,6 +2,7 @@
 
 import { CourseBlock } from "@/components/schedule/course-block"
 import { useLocale } from "@/hooks/use-locale"
+import { dateForWeekDay, formatDayDate } from "@/lib/schedule/dates"
 import { placeMeetings } from "@/lib/schedule/layout"
 import { meetingsForWeek } from "@/lib/schedule/query"
 import { CANONICAL_PERIODS, PERIOD_COUNT } from "@/lib/schedule/periods"
@@ -52,13 +53,18 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
         <div
           key={dayIndex}
           role="columnheader"
-          className="min-w-0 border-l border-solid bg-muted/40 px-0.5 py-2 text-center text-sm font-medium sm:px-1"
+          className="min-w-0 border-l border-solid bg-muted/40 px-0.5 py-1.5 text-center sm:px-1"
           style={{ gridColumn: columnIndex + 2, gridRow: 1 }}
         >
-          <span className="block truncate sm:hidden">
+          <span className="block truncate text-sm font-medium sm:hidden">
             {t.daysShort[dayIndex]}
           </span>
-          <span className="hidden truncate sm:block">{t.days[dayIndex]}</span>
+          <span className="hidden truncate text-sm font-medium sm:block">
+            {t.days[dayIndex]}
+          </span>
+          <span className="block truncate text-[10px] leading-tight text-muted-foreground tabular-nums sm:text-xs">
+            {formatDayDate(dateForWeekDay(week, dayIndex))}
+          </span>
         </div>
       ))}
       {CANONICAL_PERIODS.map((period, periodIndex) => {

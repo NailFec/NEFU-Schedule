@@ -2,38 +2,10 @@ import {
   CALENDAR_PRODID,
   SHANGHAI_OFFSET_HOURS,
   TIME_ZONE,
-  WEEK1_MONDAY,
 } from "@/lib/schedule/calendar-config"
+import { dateForWeekDay, type CivilDate } from "@/lib/schedule/dates"
 import { CANONICAL_PERIODS } from "@/lib/schedule/periods"
 import type { Meeting, Schedule } from "@/lib/schedule/types"
-
-const WEEK1_PARTS = WEEK1_MONDAY.split("-").map(Number)
-const WEEK1_YEAR = WEEK1_PARTS[0] ?? 2026
-const WEEK1_MONTH = WEEK1_PARTS[1] ?? 8
-const WEEK1_DAY = WEEK1_PARTS[2] ?? 31
-
-type CivilDate = {
-  year: number
-  month: number
-  day: number
-}
-
-function addDays(date: CivilDate, days: number): CivilDate {
-  const utc = Date.UTC(date.year, date.month - 1, date.day) + days * 86_400_000
-  const next = new Date(utc)
-  return {
-    year: next.getUTCFullYear(),
-    month: next.getUTCMonth() + 1,
-    day: next.getUTCDate(),
-  }
-}
-
-function dateForMeeting(week: number, dayIndex: number): CivilDate {
-  return addDays(
-    { year: WEEK1_YEAR, month: WEEK1_MONTH, day: WEEK1_DAY },
-    (week - 1) * 7 + dayIndex
-  )
-}
 
 function parseClock(value: string): { hour: number; minute: number } | null {
   const match = value.match(/^(\d{1,2}):(\d{2})$/)
@@ -209,7 +181,7 @@ export function scheduleToIcs(schedule: Schedule): string {
         continue
       }
 
-      const date = dateForMeeting(week, meeting.dayIndex)
+      const date = dateForWeekDay(week, meeting.dayIndex)
       const start = shanghaiClockToUtc(date, clocks.start)
       const end = shanghaiClockToUtc(date, clocks.end)
       const description = meeting.instructors.join("、")

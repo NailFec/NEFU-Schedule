@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocale } from "@/hooks/use-locale"
+import { formatWeekDateRange } from "@/lib/schedule/dates"
 
 type WeekToolbarProps = {
   week: number
@@ -27,13 +28,13 @@ export function WeekToolbar({
   maxWeek,
   onWeekChange,
 }: WeekToolbarProps) {
-  const { t } = useLocale()
+  const { locale, t } = useLocale()
   const weeks = Array.from(
     { length: maxWeek - minWeek + 1 },
     (_, index) => minWeek + index
   )
   const items = weeks.map((value) => ({
-    label: t.weekLabel(value),
+    label: t.weekLabel(value, formatWeekDateRange(value, locale)),
     value: String(value),
   }))
 
@@ -63,7 +64,7 @@ export function WeekToolbar({
       >
         <SelectTrigger
           aria-label={t.selectWeek}
-          className="min-w-0 flex-1 sm:min-w-28 sm:flex-none"
+          className="min-w-0 flex-1 sm:w-auto sm:min-w-56 sm:flex-none"
         >
           <SelectValue />
         </SelectTrigger>
