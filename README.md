@@ -69,6 +69,10 @@ Run the development server:
 pnpm run dev
 ```
 
+### Class wheel
+
+`/spinning?class=2` serves a plain HTML picker from the sibling `nefu-spinning` directory. `class` is `1`, `2`, `3`, or `4`. Set `SPINNING_ROOT` to an absolute path when the two folders are not siblings.
+
 ### Clearing Cache
 
 It is fu*king crazy about Next.js when you change an image, but the website still renders the original image. Run this command to fix it:
