@@ -20,11 +20,15 @@ function copyText(value: string): boolean {
   return ok
 }
 
-export function SubscribeFeedButton() {
+export function SubscribeFeedButton({
+  feedPath = FEED_PATH,
+}: {
+  feedPath?: string
+}) {
   const { t } = useLocale()
 
   async function onCopy() {
-    const url = `${window.location.origin}${FEED_PATH}`
+    const url = `${window.location.origin}${feedPath}`
     try {
       if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(url)

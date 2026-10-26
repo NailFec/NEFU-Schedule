@@ -5,14 +5,24 @@ import { StickyNoteIcon } from "lucide-react"
 
 import { LanguageToggle } from "@/components/schedule/language-toggle"
 import { ScheduleEmpty } from "@/components/schedule/schedule-empty"
+import { ScheduleSourceToggle } from "@/components/schedule/schedule-source-toggle"
 import { SubscribeFeedButton } from "@/components/schedule/subscribe-feed-button"
 import { WeekCalendar } from "@/components/schedule/week-calendar"
 import { WeekToolbar } from "@/components/schedule/week-toolbar"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useLocale } from "@/hooks/use-locale"
+import {
+  feedPathForSource,
+  type ScheduleSource,
+} from "@/lib/schedule/calendar-config"
 import { firstWeekWithMeetings, getWeekRange } from "@/lib/schedule/query"
-import { loadSelectedWeek, saveSelectedWeek } from "@/lib/schedule/storage"
+import {
+  loadScheduleSource,
+  loadSelectedWeek,
+  saveScheduleSource,
+  saveSelectedWeek,
+} from "@/lib/schedule/storage"
 import type { Schedule } from "@/lib/schedule/types"
 
 function MetadataFields({
@@ -40,27 +50,54 @@ function MetadataFields({
   )
 }
 
-export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
+export function ScheduleApp({
+  schedules,
+}: {
+  schedules: Record<ScheduleSource, Schedule | null>
+}) {
   const { t, ready: localeReady } = useLocale()
+  const [source, setSource] = React.useState<ScheduleSource>("default")
   const [week, setWeek] = React.useState(1)
   const [storageReady, setStorageReady] = React.useState(false)
+  const schedule = schedules[source]
 
   React.useEffect(() => {
-    if (schedule) {
-      const { minWeek, maxWeek } = getWeekRange(schedule)
+    const nextSource = loadScheduleSource()
+    setSource(nextSource)
+    const active = schedules[nextSource]
+    if (active) {
+      const { minWeek, maxWeek } = getWeekRange(active)
       const savedWeek = loadSelectedWeek()
       if (savedWeek != null && savedWeek >= minWeek && savedWeek <= maxWeek) {
         setWeek(savedWeek)
       } else {
-        setWeek(firstWeekWithMeetings(schedule))
+        setWeek(firstWeekWithMeetings(active))
       }
     }
     setStorageReady(true)
-  }, [schedule])
+  }, [schedules])
 
   function onWeekChange(nextWeek: number) {
     setWeek(nextWeek)
     saveSelectedWeek(nextWeek)
+  }
+
+  function onSourceChange(nextSource: ScheduleSource) {
+    setSource(nextSource)
+    saveScheduleSource(nextSource)
+    const active = schedules[nextSource]
+    if (!active) {
+      return
+    }
+    const { minWeek, maxWeek } = getWeekRange(active)
+    setWeek((current) => {
+      if (current >= minWeek && current <= maxWeek) {
+        return current
+      }
+      const nextWeek = firstWeekWithMeetings(active)
+      saveSelectedWeek(nextWeek)
+      return nextWeek
+    })
   }
 
   const ready = localeReady && storageReady
@@ -138,7 +175,13 @@ export function ScheduleApp({ schedule }: { schedule: Schedule | null }) {
                 />
               ) : null}
             </div>
-            {schedule ? <SubscribeFeedButton /> : null}
+            <ScheduleSourceToggle
+              source={source}
+              onSourceChange={onSourceChange}
+            />
+            {schedule ? (
+              <SubscribeFeedButton feedPath={feedPathForSource(source)} />
+            ) : null}
             <LanguageToggle />
           </div>
         </div>

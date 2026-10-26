@@ -7,4 +7,14 @@ export const SHANGHAI_OFFSET_HOURS = 8
 
 export const FEED_PATH = "/feed.ics"
 
+export const RIGEL_FEED_PATH = "/rigel-feed.ics"
+
+export const SCHEDULE_SOURCES = ["default", "rigel"] as const
+
+export type ScheduleSource = (typeof SCHEDULE_SOURCES)[number]
+
+export function feedPathForSource(source: ScheduleSource): string {
+  return source === "rigel" ? RIGEL_FEED_PATH : FEED_PATH
+}
+
 export const CALENDAR_PRODID = "-//NEFU-Schedule//EN"

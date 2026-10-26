@@ -131,22 +131,21 @@ function meetingClockRange(meeting: Meeting): {
   return { start, end }
 }
 
-function calendarName(schedule: Schedule): string {
+function calendarName(schedule: Schedule, namePrefix?: string): string {
   const term = schedule.metadata.academicTerm
   const student = schedule.metadata.studentName
+  let name = "NEFU 课程表"
   if (term && student) {
-    return `${student} ${term}`
+    name = `${student} ${term}`
+  } else if (term) {
+    name = term
+  } else if (student) {
+    name = `${student} 课程表`
   }
-  if (term) {
-    return term
-  }
-  if (student) {
-    return `${student} 课程表`
-  }
-  return "NEFU 课程表"
+  return namePrefix ? `${namePrefix} ${name}` : name
 }
 
-function eventUid(meeting: Meeting, week: number): string {
+function eventUid(meeting: Meeting, week: number, namespace: string): string {
   const key = [
     meeting.title,
     meeting.instructors.join(","),
@@ -155,10 +154,18 @@ function eventUid(meeting: Meeting, week: number): string {
     meeting.sectionNumbers.join("-"),
     String(week),
   ].join("|")
-  return `nefu-${fnv1aHex(key)}@schedule`
+  return `${namespace}-${fnv1aHex(key)}@schedule`
 }
 
-export function scheduleToIcs(schedule: Schedule): string {
+export type IcsOptions = {
+  namePrefix?: string
+  uidNamespace?: string
+}
+
+export function scheduleToIcs(
+  schedule: Schedule,
+  options: IcsOptions = {}
+): string {
   const dtstamp = formatUtcStamp(new Date(schedule.importedAt))
   const lines = [
     "BEGIN:VCALENDAR",
@@ -166,7 +173,7 @@ export function scheduleToIcs(schedule: Schedule): string {
     `PRODID:${CALENDAR_PRODID}`,
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    `X-WR-CALNAME:${escapeText(calendarName(schedule))}`,
+    `X-WR-CALNAME:${escapeText(calendarName(schedule, options.namePrefix))}`,
     `X-WR-TIMEZONE:${TIME_ZONE}`,
   ]
 
@@ -187,7 +194,9 @@ export function scheduleToIcs(schedule: Schedule): string {
       const description = meeting.instructors.join("、")
 
       lines.push("BEGIN:VEVENT")
-      lines.push(`UID:${eventUid(meeting, week)}`)
+      lines.push(
+        `UID:${eventUid(meeting, week, options.uidNamespace ?? "nefu")}`
+      )
       lines.push(`DTSTAMP:${dtstamp}`)
       lines.push(`DTSTART:${formatUtcStamp(start)}`)
       lines.push(`DTEND:${formatUtcStamp(end)}`)

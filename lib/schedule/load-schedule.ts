@@ -13,10 +13,16 @@ type ScheduleCache = {
   schedule: Schedule
 }
 
-let cache: ScheduleCache | null = null
+const caches = new Map<string, ScheduleCache | null>()
+
+const RIGEL_DIRECTORY_NAME = "rigel"
 
 function dataDirectory(): string {
   return path.join(process.cwd(), "data")
+}
+
+function rigelDirectory(): string {
+  return path.join(dataDirectory(), RIGEL_DIRECTORY_NAME)
 }
 
 function htmlPriority(filePath: string): number {
@@ -30,7 +36,10 @@ function htmlPriority(filePath: string): number {
   return 2
 }
 
-async function listHtmlFiles(root: string): Promise<string[]> {
+async function listHtmlFiles(
+  root: string,
+  skipDirectoryNames: ReadonlySet<string>
+): Promise<string[]> {
   const files: string[] = []
 
   async function walk(directory: string) {
@@ -44,6 +53,9 @@ async function listHtmlFiles(root: string): Promise<string[]> {
     for (const entry of entries) {
       const fullPath = path.join(directory, entry.name)
       if (entry.isDirectory()) {
+        if (skipDirectoryNames.has(entry.name)) {
+          continue
+        }
         await walk(fullPath)
         continue
       }
@@ -63,10 +75,13 @@ async function listHtmlFiles(root: string): Promise<string[]> {
   })
 }
 
-export async function loadScheduleFromDisk(): Promise<Schedule | null> {
-  const files = await listHtmlFiles(dataDirectory())
+async function loadScheduleFromDirectory(
+  root: string,
+  skipDirectoryNames: ReadonlySet<string>
+): Promise<Schedule | null> {
+  const files = await listHtmlFiles(root, skipDirectoryNames)
   if (files.length === 0) {
-    cache = null
+    caches.set(root, null)
     return null
   }
 
@@ -78,6 +93,7 @@ export async function loadScheduleFromDisk(): Promise<Schedule | null> {
       continue
     }
 
+    const cache = caches.get(root)
     if (
       cache &&
       cache.filePath === filePath &&
@@ -99,17 +115,28 @@ export async function loadScheduleFromDisk(): Promise<Schedule | null> {
 
     try {
       const schedule = parseScheduleHtml(html, info.mtime.toISOString())
-      cache = {
+      caches.set(root, {
         filePath,
         mtimeMs: info.mtimeMs,
         schedule,
-      }
+      })
       return schedule
     } catch {
       continue
     }
   }
 
-  cache = null
+  caches.set(root, null)
   return null
+}
+
+export function loadScheduleFromDisk(): Promise<Schedule | null> {
+  return loadScheduleFromDirectory(
+    dataDirectory(),
+    new Set([RIGEL_DIRECTORY_NAME])
+  )
+}
+
+export function loadRigelScheduleFromDisk(): Promise<Schedule | null> {
+  return loadScheduleFromDirectory(rigelDirectory(), new Set())
 }

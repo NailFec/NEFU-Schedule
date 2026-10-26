@@ -28,6 +28,9 @@ export type Messages = {
   subscribeFeed: string
   subscribeCopied: string
   subscribeCopyError: string
+  scheduleSource: string
+  sourceDefault: string
+  sourceRigel: string
 }
 
 function formatPeriodTime(startTime: string, endTime: string): string {
@@ -72,6 +75,9 @@ export const messages: Record<Locale, Messages> = {
     subscribeFeed: "复制订阅链接",
     subscribeCopied: "订阅链接已复制。",
     subscribeCopyError: "无法复制订阅链接。",
+    scheduleSource: "课表",
+    sourceDefault: "默认",
+    sourceRigel: "Rigel",
   },
   en: {
     appTitle: "Schedule",
@@ -110,5 +116,8 @@ export const messages: Record<Locale, Messages> = {
     subscribeFeed: "Copy subscribe link",
     subscribeCopied: "Subscribe link copied.",
     subscribeCopyError: "Could not copy the subscribe link.",
+    scheduleSource: "Schedule",
+    sourceDefault: "Default",
+    sourceRigel: "Rigel",
   },
 }
