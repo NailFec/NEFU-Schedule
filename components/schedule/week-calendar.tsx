@@ -2,7 +2,12 @@
 
 import { CourseBlock } from "@/components/schedule/course-block"
 import { useLocale } from "@/hooks/use-locale"
-import { dateForWeekDay, formatDayDate } from "@/lib/schedule/dates"
+import {
+  dateForWeekDay,
+  formatDayDate,
+  sameCivilDate,
+  todayCivilDate,
+} from "@/lib/schedule/dates"
 import { placeMeetings } from "@/lib/schedule/layout"
 import { meetingsForWeek } from "@/lib/schedule/query"
 import { CANONICAL_PERIODS, PERIOD_COUNT } from "@/lib/schedule/periods"
@@ -31,6 +36,7 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
   const weeklyMeetings = meetingsForWeek(schedule, week)
   const days = visibleDayIndexes(weeklyMeetings)
   const lastPeriodIndex = CANONICAL_PERIODS.length - 1
+  const today = todayCivilDate()
 
   return (
     <div
@@ -49,24 +55,36 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
       >
         {t.period}
       </div>
-      {days.map((dayIndex, columnIndex) => (
-        <div
-          key={dayIndex}
-          role="columnheader"
-          className="min-w-0 border-l border-solid bg-muted/40 px-0.5 py-1.5 text-center sm:px-1"
-          style={{ gridColumn: columnIndex + 2, gridRow: 1 }}
-        >
-          <span className="block truncate text-sm font-medium sm:hidden">
-            {t.daysShort[dayIndex]}
-          </span>
-          <span className="hidden truncate text-sm font-medium sm:block">
-            {t.days[dayIndex]}
-          </span>
-          <span className="block truncate text-[10px] leading-tight text-muted-foreground tabular-nums sm:text-xs">
-            {formatDayDate(dateForWeekDay(week, dayIndex))}
-          </span>
-        </div>
-      ))}
+      {days.map((dayIndex, columnIndex) => {
+        const isToday = sameCivilDate(dateForWeekDay(week, dayIndex), today)
+        return (
+          <div
+            key={dayIndex}
+            role="columnheader"
+            aria-current={isToday ? "date" : undefined}
+          className={cn(
+            "min-w-0 border-l border-solid px-0.5 py-1.5 text-center sm:px-1",
+            isToday ? "bg-primary text-primary-foreground" : "bg-muted/40"
+          )}
+            style={{ gridColumn: columnIndex + 2, gridRow: 1 }}
+          >
+            <span className="block truncate text-sm font-medium sm:hidden">
+              {t.daysShort[dayIndex]}
+            </span>
+            <span className="hidden truncate text-sm font-medium sm:block">
+              {t.days[dayIndex]}
+            </span>
+            <span
+            className={cn(
+              "block truncate text-[10px] leading-tight tabular-nums sm:text-xs",
+              isToday ? "text-primary-foreground/80" : "text-muted-foreground"
+            )}
+          >
+              {formatDayDate(dateForWeekDay(week, dayIndex))}
+            </span>
+          </div>
+        )
+      })}
       {CANONICAL_PERIODS.map((period, periodIndex) => {
         const isLastPeriod = periodIndex === lastPeriodIndex
         return (
@@ -92,19 +110,26 @@ export function WeekCalendar({ schedule, week }: WeekCalendarProps) {
                 {t.periodTime(period.startTime, period.endTime)}
               </span>
             </div>
-            {days.map((dayIndex, columnIndex) => (
-              <div
-                key={dayIndex}
-                className={cn(
-                  "min-h-0 min-w-0 border-l border-solid",
-                  !isLastPeriod && "border-b border-dashed"
-                )}
-                style={{
-                  gridColumn: columnIndex + 2,
-                  gridRow: periodIndex + 2,
-                }}
-              />
-            ))}
+            {days.map((dayIndex, columnIndex) => {
+              const isToday = sameCivilDate(
+                dateForWeekDay(week, dayIndex),
+                today
+              )
+              return (
+                <div
+                  key={dayIndex}
+                  className={cn(
+                    "min-h-0 min-w-0 border-l border-solid",
+                    !isLastPeriod && "border-b border-dashed",
+                    isToday && "bg-chart-1/25"
+                  )}
+                  style={{
+                    gridColumn: columnIndex + 2,
+                    gridRow: periodIndex + 2,
+                  }}
+                />
+              )
+            })}
           </div>
         )
       })}

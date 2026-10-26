@@ -1,5 +1,5 @@
 import type { Locale } from "@/lib/i18n/messages"
-import { WEEK1_MONDAY } from "@/lib/schedule/calendar-config"
+import { TIME_ZONE, WEEK1_MONDAY } from "@/lib/schedule/calendar-config"
 
 export type CivilDate = {
   year: number
@@ -49,6 +49,40 @@ export function addDays(date: CivilDate, days: number): CivilDate {
 /** Calendar date for a teaching week. Week 1 contains September 1; day 0 is Monday. */
 export function dateForWeekDay(week: number, dayIndex: number): CivilDate {
   return addDays(WEEK1, (week - 1) * 7 + dayIndex)
+}
+
+export function sameCivilDate(a: CivilDate, b: CivilDate): boolean {
+  return a.year === b.year && a.month === b.month && a.day === b.day
+}
+
+function daysBetween(start: CivilDate, end: CivilDate): number {
+  const startMs = Date.UTC(start.year, start.month - 1, start.day)
+  const endMs = Date.UTC(end.year, end.month - 1, end.day)
+  return Math.round((endMs - startMs) / 86_400_000)
+}
+
+/** Teaching week that contains `date`. Week 1 starts on WEEK1_MONDAY. */
+export function weekContaining(date: CivilDate): number {
+  return Math.floor(daysBetween(WEEK1, date) / 7) + 1
+}
+
+export function todayCivilDate(now = new Date()): CivilDate {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIME_ZONE,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(now)
+
+  const read = (type: Intl.DateTimeFormatPartTypes) => {
+    const value = Number(parts.find((part) => part.type === type)?.value)
+    if (!Number.isInteger(value)) {
+      throw new Error(`Missing ${type} for ${TIME_ZONE}`)
+    }
+    return value
+  }
+
+  return { year: read("year"), month: read("month"), day: read("day") }
 }
 
 export function formatMonthDay(date: CivilDate, locale: Locale): string {

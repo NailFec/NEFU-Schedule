@@ -13,7 +13,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useLocale } from "@/hooks/use-locale"
-import { formatWeekDateRange } from "@/lib/schedule/dates"
+import {
+  formatWeekDateRange,
+  todayCivilDate,
+  weekContaining,
+} from "@/lib/schedule/dates"
 
 type WeekToolbarProps = {
   week: number
@@ -29,6 +33,8 @@ export function WeekToolbar({
   onWeekChange,
 }: WeekToolbarProps) {
   const { locale, t } = useLocale()
+  const todayWeek = weekContaining(todayCivilDate())
+  const canGoToToday = todayWeek >= minWeek && todayWeek <= maxWeek
   const weeks = Array.from(
     { length: maxWeek - minWeek + 1 },
     (_, index) => minWeek + index
@@ -39,54 +45,63 @@ export function WeekToolbar({
   }))
 
   return (
-    <ButtonGroup className="w-full sm:w-fit">
-      <Button
-        variant="outline"
-        size="icon"
-        aria-label={t.previousWeek}
-        disabled={week <= minWeek}
-        onClick={() => onWeekChange(week - 1)}
-      >
-        <ChevronLeftIcon />
-      </Button>
-      <Select
-        items={items}
-        value={String(week)}
-        onValueChange={(value) => {
-          if (value == null) {
-            return
-          }
-          const next = Number(value)
-          if (Number.isInteger(next)) {
-            onWeekChange(next)
-          }
-        }}
-      >
-        <SelectTrigger
-          aria-label={t.selectWeek}
-          className="min-w-0 flex-1 sm:w-auto sm:min-w-56 sm:flex-none"
+    <div className="flex w-full items-center gap-2 sm:w-auto">
+      <ButtonGroup className="min-w-0 flex-1 sm:w-fit sm:flex-none">
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={t.previousWeek}
+          disabled={week <= minWeek}
+          onClick={() => onWeekChange(week - 1)}
         >
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent alignItemWithTrigger={false} side="bottom">
-          <SelectGroup>
-            {items.map((item) => (
-              <SelectItem key={item.value} value={item.value}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectGroup>
-        </SelectContent>
-      </Select>
+          <ChevronLeftIcon />
+        </Button>
+        <Select
+          items={items}
+          value={String(week)}
+          onValueChange={(value) => {
+            if (value == null) {
+              return
+            }
+            const next = Number(value)
+            if (Number.isInteger(next)) {
+              onWeekChange(next)
+            }
+          }}
+        >
+          <SelectTrigger
+            aria-label={t.selectWeek}
+            className="min-w-0 flex-1 sm:w-auto sm:min-w-56 sm:flex-none"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent alignItemWithTrigger={false} side="bottom">
+            <SelectGroup>
+              {items.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        <Button
+          variant="outline"
+          size="icon"
+          aria-label={t.nextWeek}
+          disabled={week >= maxWeek}
+          onClick={() => onWeekChange(week + 1)}
+        >
+          <ChevronRightIcon />
+        </Button>
+      </ButtonGroup>
       <Button
         variant="outline"
-        size="icon"
-        aria-label={t.nextWeek}
-        disabled={week >= maxWeek}
-        onClick={() => onWeekChange(week + 1)}
+        disabled={!canGoToToday}
+        onClick={() => onWeekChange(todayWeek)}
       >
-        <ChevronRightIcon />
+        {t.today}
       </Button>
-    </ButtonGroup>
+    </div>
   )
 }

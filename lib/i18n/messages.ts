@@ -8,6 +8,7 @@ export type Messages = {
   previousWeek: string
   nextWeek: string
   selectWeek: string
+  today: string
   period: string
   periodLabel: (sectionNumber: number) => string
   periodTime: (startTime: string, endTime: string) => string
@@ -43,6 +44,7 @@ export const messages: Record<Locale, Messages> = {
     previousWeek: "上一周",
     nextWeek: "下一周",
     selectWeek: "选择周次",
+    today: "今日",
     period: "节次",
     periodLabel: (sectionNumber) => `第 ${sectionNumber} 节`,
     periodTime: formatPeriodTime,
@@ -80,6 +82,7 @@ export const messages: Record<Locale, Messages> = {
     previousWeek: "Previous week",
     nextWeek: "Next week",
     selectWeek: "Select week",
+    today: "Today",
     period: "Period",
     periodLabel: (sectionNumber) => `Period ${sectionNumber}`,
     periodTime: formatPeriodTime,
